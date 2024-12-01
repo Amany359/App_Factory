@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller; // Base Controller
 use App\Models\Shape; // Shape Model
 use App\Http\Requests\User\Shape\StoreShapeRequest; // Store Validation Request
 use App\Http\Requests\User\Shape\UpdateShapeRequest; // Update Validation Request
+use App\Http\Requests\User\Shape\CalculatePropertiesRequest; // CalculateProperties Validation Request
+
 use Illuminate\Http\Request;
 
 class ShapeController extends Controller
@@ -78,4 +80,33 @@ class ShapeController extends Controller
 
         return successResponse(null, 'Shape deleted successfully');
     }
+
+    public function calculateProperties(CalculatePropertiesRequest $request)
+{
+    // Validate the request and extract validated data
+    $validated = $request->validated();
+
+    $shapeType = $validated['shape_type']; // Type of shape (e.g., rectangle, cylinder)
+    $dimensions = $validated['dimensions']; // Shape dimensions
+    $density = $validated['density']; // Density of the material
+
+    // Calculate volume based on shape type
+    $volume = 0;
+    if ($shapeType === 'rectangle') {
+        $volume = $dimensions['length'] * $dimensions['width'] * $dimensions['height']; // Volume for a rectangle
+    } elseif ($shapeType === 'cylinder') {
+        $volume = pi() * pow($dimensions['radius'], 2) * $dimensions['height']; // Volume for a cylinder
+    }
+
+    // Calculate weight using density and volume
+    $weight = $density * $volume;
+
+    // Return a successful response with calculated properties
+    return successResponse([
+        'shape_type' => $shapeType,
+        'volume' => $volume,
+        'weight' => $weight,
+    ], 'Properties calculated successfully');
+}
+
 }

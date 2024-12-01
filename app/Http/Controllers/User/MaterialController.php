@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\User;
 
-use App\Http\Controllers\Controller; // Base Controller
-use App\Models\Material; // Material Model
-use App\Http\Requests\User\Material\StoreMaterialRequest; // Store Validation Request
-use App\Http\Requests\User\Material\UpdateMaterialRequest; // Update Validation Request
+use App\Http\Controllers\Controller;
+use App\Models\Material;
+use App\Http\Requests\User\Material\StoreMaterialRequest;
+use App\Http\Requests\User\Material\UpdateMaterialRequest;
 
 class MaterialController extends Controller
 {
@@ -84,17 +84,14 @@ class MaterialController extends Controller
      */
     public function calculateTotalArea($id)
     {
-        // البحث عن المادة المطلوبة باستخدام المعرّف
         $material = Material::with('shapes')->find($id);
 
         if (!$material) {
             return errorResponse('Material not found', 404);
         }
 
-        // حساب المساحة الإجمالية باستخدام العلاقة مع الأشكال
         $totalArea = $material->shapes()->sum('area');
 
-        // إرجاع الاستجابة
         return successResponse([
             'material_id' => $id,
             'material_name' => $material->name,
